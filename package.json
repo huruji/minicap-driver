@@ -1,10 +1,8 @@
 {
 	"name": "minicap-driver",
-	"version": "1.2.1",
+	"version": "1.0.0",
 	"description": "",
 	"main": "dist/index.js",
-	"module": "dist/index.mjs",
-	"source": "index.ts",
 	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "microbundle build --entry index.ts --output dist/index.js",
@@ -14,7 +12,7 @@
 		"release:minor": "npm run build && standard-version --release-as minor && git push --follow-tags origin master && npm publish",
 		"release:patch": "npm run build && standard-version --release-as patch && git push --follow-tags origin master && npm publish"
 	},
-	"homepage": "https://github.com/huruji/saso#readme",
+	"homepage": "https://github.com/huruji/minicap-driver#readme",
 	"repository": {
 		"type": "git",
 		"url": ""
@@ -48,6 +46,9 @@
 	"dependencies": {
 		"minicap-prebuilt": "^2.3.0",
 		"ws": "^7.1.1"
-	},
+  },
+  "files": [
+    "dist"
+  ],
 	"gitHead": "45b576f74c12b352c43c3b592f175d18c4d361d6"
 }
