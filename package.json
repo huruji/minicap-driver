@@ -1,5 +1,5 @@
 {
-	"name": "saso-template-mini-lib-ts",
+	"name": "minicap-driver",
 	"version": "1.2.1",
 	"description": "",
 	"main": "dist/index.js",
@@ -24,6 +24,8 @@
 	"license": "ISC",
 	"devDependencies": {
 		"@commitlint/cli": "^7.5.2",
+		"@types/node": "^12.6.8",
+		"@types/ws": "^6.0.1",
 		"@typescript-eslint/eslint-plugin": "^1.6.0",
 		"@typescript-eslint/parser": "^1.6.0",
 		"bili": "^4.7.2",
@@ -44,8 +46,8 @@
 		"typescript": "^3.4.1"
 	},
 	"dependencies": {
-		"@types/jquery": "^3.3.29",
-		"@types/scroll-to-element": "^2.0.0"
+		"minicap-prebuilt": "^2.3.0",
+		"ws": "^7.1.1"
 	},
 	"gitHead": "45b576f74c12b352c43c3b592f175d18c4d361d6"
 }
