@@ -1,4 +1,5 @@
-function start(wslocation: string, selector: string) {
+function minicapClient(wslocation: string, selector: string) {
+  console.log('9999')
 	const ws = new WebSocket(wslocation)
 	const canvas: HTMLCanvasElement = document.querySelector(selector) as HTMLCanvasElement
 	const context = canvas.getContext('2d')!
@@ -28,3 +29,5 @@ function start(wslocation: string, selector: string) {
 		}
 	})
 }
+
+export { minicapClient }

@@ -126,3 +126,6 @@ typings/
 .rts2_cache_umd
 
 dist
+
+example/server/app.js
+example/server/app.js.map
