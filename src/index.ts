@@ -22,14 +22,31 @@ import { Server as WebSocketServer } from 'ws'
 declare module 'child_process' {
 	interface ChildProcess {
 		hasSocket: boolean
+		started: boolean
 	}
 }
+
+// interface WebSocket {
+// 	minicap?: boolean
+// }
+
+let deviceInfo: {
+	width?: number
+	height?: number
+	rotation?: number
+} = {}
 
 let readBannerBytes = 0
 let bannerLength = 2
 let readFrameBytes = 0
 let frameBodyLength = 0
 let frameBody = Buffer.from([])
+
+let proc: ChildProcess = null
+
+const sockets: WebSocket[] = []
+
+let lastFramBody: Buffer
 
 const banner = {
 	version: 0,
@@ -105,10 +122,13 @@ function read(socket: net.Socket, ws: WebSocket) {
 		} else {
 			if (len - cursor >= frameBodyLength) {
 				frameBody = Buffer.concat([frameBody, chunk.slice(cursor, cursor + frameBodyLength)])
-				ws.send(frameBody, {
-					binary: true
-				})
-				ws.send
+				lastFramBody = frameBody
+				console.log('send framebody')
+				for (let i = 0; i < sockets.length; i++) {
+					sockets[i].send(frameBody, {
+						binary: true
+					})
+				}
 				cursor += frameBodyLength
 				frameBodyLength = readFrameBytes = 0
 				frameBody = Buffer.from([])
@@ -127,11 +147,17 @@ function startSocket(ws: WebSocket, port: number) {
 		port
 	})
 
-	socket.on('data', () => {
-		console.log('123123123123123')
+	ws.addEventListener('close', () => {
+		console.log('close')
+		sockets.splice(sockets.indexOf(ws), 1)
 	})
 
-	console.log('fsdfsdfsd')
+	console.log('connect')
+
+	socket.on('data', () => {
+		console.log('socketdata')
+	})
+
 	socket.on('readable', () => {
 		read(socket, ws)
 	})
@@ -148,7 +174,7 @@ async function init(): Promise<void> {
 	await createDeviceMinicapDir()
 
 	const abi = (await getCPUAbiType()) as string
-	console.log(abi.length)
+
 	const sdk = await getSDKVersion()
 
 	const binDir = resolve(__dirname, '../', MINICAP_PREBUILT_DIR, abi, 'bin', NAME)
@@ -160,26 +186,51 @@ async function init(): Promise<void> {
 	await pushMinicapLibToDevice(libDir)
 
 	await changeModForMinicap()
-}
-
-async function start(ws, port = 1717) {
 	const { width, height } = await getScreenSize()
 	const rotation = await getRotation()
+	deviceInfo = Object.assign(
+		{},
+		{
+			width,
+			height,
+			rotation
+		}
+	)
+}
 
-	const proc: ChildProcess = (await startMinicap(
-		width,
-		height,
-		Math.round(width / 2),
-		Math.round(height / 2),
-		rotation
-	)) as ChildProcess
+async function start(ws: WebSocket, port = 1717) {
+	sockets.push(ws)
+	if (lastFramBody) {
+		for (let i = 0; i < sockets.length; i++) {
+			sockets[i].send(lastFramBody, {
+				binary: true
+			})
+		}
+	}
+	if (!proc || !proc.started) {
+		proc = (await startMinicap(
+			deviceInfo.width!,
+			deviceInfo.height!,
+			Math.round(deviceInfo.width! / 2),
+			Math.round(deviceInfo.height! / 2),
+			deviceInfo.rotation!
+		)) as ChildProcess
+	}
 
+	proc.started = true
+	// if (!proc.hasSocket) {
 	proc.stdout!.on('data', async () => {
+		console.log('data')
 		if (proc.hasSocket) return
 		await forwardPort(port, 'minicap')
 		proc.hasSocket = true
 		startSocket(ws, port)
 	})
+	// }
 }
 
+process.on('exit', async () => {
+	console.log('exit')
+	exit()
+})
 export { start, exit, init }

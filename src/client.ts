@@ -1,5 +1,5 @@
 function minicapClient(wslocation: string, selector: string) {
-  console.log('9999')
+	console.log('9999')
 	const ws = new WebSocket(wslocation)
 	const canvas: HTMLCanvasElement = document.querySelector(selector) as HTMLCanvasElement
 	const context = canvas.getContext('2d')!
@@ -14,6 +14,8 @@ function minicapClient(wslocation: string, selector: string) {
 	})
 
 	ws.addEventListener('message', event => {
+		console.log('message')
+		console.log(event.data)
 		const blob = new Blob([event.data], {
 			type: 'image/jpeg'
 		})
