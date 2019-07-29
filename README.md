@@ -1,6 +1,6 @@
 ## minicap-driver
 
-一个对 [minicap](https://github.com/openstf/minicap) 的 node.js 封装，不需要关注 minicap 的底层原理，让你轻松实现电脑浏览器实时投影 android 设备，并保证高帧率。
+一个对 [minicap](https://github.com/openstf/minicap) 的 node.js 封装，让开发人员不需要关注 minicap 的底层原理 websocket 的处理，更加轻松实现 Android 设备投影到浏览器，并保证高帧率。
 
 ![](./shot.gif)
 
