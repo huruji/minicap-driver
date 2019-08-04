@@ -1,6 +1,5 @@
-function minicapClient(wslocation: string, selector: string) {
+function minicapClient(ws: WebSocket, selector: string) {
 	console.log('9999')
-	const ws = new WebSocket(wslocation)
 	const canvas: HTMLCanvasElement = document.querySelector(selector) as HTMLCanvasElement
 	const context = canvas.getContext('2d')!
 	ws.binaryType = 'blob'
@@ -13,16 +12,19 @@ function minicapClient(wslocation: string, selector: string) {
 		console.log(e)
 	})
 
+	ws.addEventListener('close', e => {
+		console.log('close')
+	})
 	ws.addEventListener('message', event => {
-		console.log('message')
-		console.log(event.data)
+		// console.log('message')
+		// console.log(event.data)
 		const blob = new Blob([event.data], {
 			type: 'image/jpeg'
 		})
 
 		const URL = window.URL
 		const img = new Image()
-		img.src = URL.createObjectURL(blob)
+		img.src = (URL || webkitURL).createObjectURL(blob)
 
 		img.onload = () => {
 			canvas.width = img.width

@@ -12,7 +12,7 @@ import {
 	forwardPort,
 	startMinicap
 } from './adb'
-import { MINICAP_PREBUILT_DIR, NAME } from './CONSTANT'
+import { MINICAP_PREBUILT_DIR, MINICAP_NAME as NAME } from './CONSTANT'
 
 import { resolve } from 'path'
 import * as net from 'net'
@@ -154,9 +154,9 @@ function startSocket(ws: WebSocket, port: number) {
 
 	console.log('connect')
 
-	socket.on('data', () => {
-		console.log('socketdata')
-	})
+	// socket.on('data', () => {
+	// 	console.log('socketdata')
+	// })
 
 	socket.on('readable', () => {
 		read(socket, ws)
@@ -218,7 +218,7 @@ async function start(ws: WebSocket, port = 1717) {
 	}
 
 	proc.started = true
-	// if (!proc.hasSocket) {
+
 	proc.stdout!.on('data', async () => {
 		console.log('data')
 		if (proc.hasSocket) return
@@ -226,7 +226,6 @@ async function start(ws: WebSocket, port = 1717) {
 		proc.hasSocket = true
 		startSocket(ws, port)
 	})
-	// }
 }
 
 process.on('exit', async () => {

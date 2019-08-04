@@ -1,5 +1,5 @@
 import { exec, ChildProcess } from 'child_process'
-import { NAME, DEVICE_MINICAP_DIR } from './CONSTANT'
+import { MINICAP_NAME, DEVICE_MINICAP_DIR, MINITOUCH_NAME, DEVICE_MINITOUCH_DIR } from './CONSTANT'
 
 interface Device {
 	name: string
@@ -41,18 +41,21 @@ const use = (device: Device) => (currentDeviceName = device.name)
 
 const verbose = (value: boolean) => (isVerbose = value)
 
-const killMinicapProcess = () => call(`shell -x killall ${NAME}`)
+const killMinicapProcess = () => call(`shell -x killall ${MINICAP_NAME}`)
 const removeMinicapDir = () => call(`shell rm -rf ${DEVICE_MINICAP_DIR}`)
 const createDeviceMinicapDir = () => call(`shell mkdir ${DEVICE_MINICAP_DIR}`)
+const pushMinicapToDevice = (binaryDir: string) => call(`push ${binaryDir} ${DEVICE_MINICAP_DIR}/`)
+const pushMinicapLibToDevice = (libDir: string) => call(`push ${libDir} ${DEVICE_MINICAP_DIR}/`)
+const changeModForMinicap = () => call(`shell -x chmod +x ${DEVICE_MINICAP_DIR}/${MINICAP_NAME}`)
+
+const killMinitouchProcess = () => call(`shell -x killall ${MINITOUCH_NAME}`)
+const removeMinitouchDir = () => call(`shell rm -rf ${DEVICE_MINITOUCH_DIR}`)
+const createDeviceMinitouchDir = () => call(`shell mkdir ${DEVICE_MINITOUCH_DIR}`)
+const pushMinitouchToDevice = (binaryDir: string) => call(`push ${binaryDir} ${DEVICE_MINITOUCH_DIR}`)
+const changeModForMinitouch = () => call(`shell -x chmod +x ${DEVICE_MINITOUCH_DIR}/${MINITOUCH_NAME}`)
 
 const getCPUAbiType = () => call(`shell getprop ro.product.cpu.abi`)
 const getSDKVersion = () => call(`shell getprop ro.build.version.sdk`)
-
-const pushMinicapToDevice = (binaryDir: string) => call(`push ${binaryDir} ${DEVICE_MINICAP_DIR}/`)
-
-const pushMinicapLibToDevice = (libDir: string) => call(`push ${libDir} ${DEVICE_MINICAP_DIR}/`)
-
-const changeModForMinicap = () => call(`shell -x chmod +x ${DEVICE_MINICAP_DIR}/${NAME}`)
 
 const getScreenSize = async (): Promise<{ width: number; height: number }> => {
 	const str = (await call('shell wm size')) as string
@@ -77,9 +80,11 @@ const forwardPort = async (port: number, name: string) => call(`forward tcp:${po
 
 const startMinicap = async (w: number, h: number, w1: number, h1: number, r: number) =>
 	call(
-		`shell -x LD_LIBRARY_PATH=${DEVICE_MINICAP_DIR} ${DEVICE_MINICAP_DIR}/${NAME} -P ${w}x${h}@${w1}x${h1}/${r}`,
+		`shell -x LD_LIBRARY_PATH=${DEVICE_MINICAP_DIR} ${DEVICE_MINICAP_DIR}/${MINICAP_NAME} -P ${w}x${h}@${w1}x${h1}/${r}`,
 		true
 	)
+
+const startMinitouch = async () => call(`shell -x ${DEVICE_MINITOUCH_DIR}/${MINITOUCH_NAME}`, true)
 
 export {
 	devices,
@@ -96,5 +101,11 @@ export {
 	getScreenSize,
 	getRotation,
 	forwardPort,
-	startMinicap
+	startMinicap,
+	killMinitouchProcess,
+	removeMinitouchDir,
+	createDeviceMinitouchDir,
+	pushMinitouchToDevice,
+	changeModForMinitouch,
+	startMinitouch
 }

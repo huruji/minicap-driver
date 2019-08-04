@@ -45,10 +45,11 @@
 	},
 	"dependencies": {
 		"minicap-prebuilt": "^2.3.0",
+		"minitouch-prebuilt": "^1.2.0",
 		"ws": "^7.1.1"
-  },
-  "files": [
-    "dist"
-  ],
+	},
+	"files": [
+		"dist"
+	],
 	"gitHead": "45b576f74c12b352c43c3b592f175d18c4d361d6"
 }

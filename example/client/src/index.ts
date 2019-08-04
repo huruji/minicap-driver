@@ -1,3 +1,10 @@
 import { minicapClient } from '../../../src/client'
+import { minitouchClient } from '../../../src/miniTouchClient'
 
-minicapClient('ws://localhost:9002', '#canvas')
+const ws = new WebSocket('ws://localhost:9000')
+
+minicapClient(ws, '#canvas')
+
+minitouchClient(ws, '#canvas', true)
+
+// minitouchClient('ws://localhost:9002', '#canvas')
