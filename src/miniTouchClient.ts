@@ -6,37 +6,46 @@ let hasDown = false
 function wsJson(obj: { [key: string]: any }) {
 	if (ws.readyState === ws.OPEN) {
 		const json = JSON.stringify(obj)
-		if (debug) console.log('wsJson', json)
 
 		ws.send(json)
 	}
 }
 
-function start(w: WebSocket, el: string, d: boolean = false) {
+function start(w: WebSocket, el: string, opt: { debug?: boolean } = { debug: false }) {
+	const options = Object.assign(
+		{
+			debug: false
+		},
+		opt
+	)
 	ws = w
-	debug = d
+	debug = options.debug
 
 	const canvas = document.querySelector(el)!
 
 	function mouseHandler(t: string, e: MouseEvent) {
-		const cx = e.clientX
-		const cy = e.clientY
+		const cx = e.offsetX
+		const cy = e.offsetY
 
 		const x = cx / canvas.scrollWidth
 		const y = cy / canvas.scrollHeight
 
-		wsJson({
+		let json = {
 			event: 'mouse',
 			t,
 			x,
 			y
-		})
+		}
+
+		wsJson(json)
+
+		if (debug) {
+			console.log('mouse event:', JSON.stringify(json))
+		}
 	}
 
-	console.log('addeventlistener')
 	canvas.addEventListener('mousedown', (e: MouseEvent) => {
 		hasDown = true
-		console.log('mousedown')
 		mouseHandler('d', e)
 		e.preventDefault()
 	})

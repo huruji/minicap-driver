@@ -17,7 +17,7 @@ let maxX = 0
 let maxY = 0
 // let maxPressure = 0
 
-let minitouchSocket
+let minitouchSocket: net.Socket
 
 // let hasStarted = false
 
